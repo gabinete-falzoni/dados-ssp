@@ -5,7 +5,7 @@ library('arrow')
 
 
 # Estrutura de pastas
-pasta_dados <- '/home/flavio/Dados/gitlab/dados-ssp-bicicleta/dados'
+pasta_dados <- '/home/flavio/Dados/gitlab/dados-ssp/dados'
 
 
 # ------------------------------------------------------------------------------
