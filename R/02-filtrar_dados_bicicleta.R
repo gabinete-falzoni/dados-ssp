@@ -305,6 +305,31 @@ ssp_out <- ssp_out %>%
   filter(DESCR_SUBTIPO_OBJETO == 'Bicicleta' | DESCR_SUBTIPO_OBJETO == 'Bicicleta Elétrica')
 
 
+check_this <- function(df, group_col) {
+          this <- df
+          this %>% group_by(!!group_col) %>% count() %>% head(20) %>% print()
+        }
+
+check_this(ssp_out, expr(RUBRICA_REV))
+
+ssp_out <- ssp_out %>%
+  mutate(FLAG_STATUS = toupper(FLAG_STATUS),
+         RUBRICA_REV = ifelse(RUBRICA_REV == 'Apropriação indébita (art. 168)', 'Apropriação indébita', RUBRICA_REV),
+         DESCR_PERIODO = toupper(DESCR_PERIODO),
+         DESCR_MODO_OBJETO = toupper(DESCR_MODO_OBJETO),
+         DESCR_CONDUTA = toupper(DESCR_CONDUTA),
+         DESCR_CONDUTA = ifelse(DESCR_CONDUTA == 'NULL', as.character(NA), DESCR_CONDUTA),
+         DESCR_PERIODO = ifelse(DESCR_PERIODO == 'NULL', as.character(NA), DESCR_PERIODO),
+         DESCR_TIPOLOCAL = toupper(DESCR_TIPOLOCAL),
+         DESCR_SUBTIPOLOCAL = toupper(DESCR_SUBTIPOLOCAL),
+         DESCR_TIPOLOCAL = ifelse(DESCR_TIPOLOCAL == 'CONDOMINIO COMERCIAL', 'CONDOMÍNIO COMERCIAL', DESCR_TIPOLOCAL),
+         DESCR_TIPOLOCAL = ifelse(DESCR_TIPOLOCAL == 'CONDOMINIO RESIDENCIAL', 'CONDOMÍNIO RESIDENCIAL', DESCR_TIPOLOCAL),
+         DESCR_TIPOLOCAL = ifelse(DESCR_TIPOLOCAL == 'CENTRO COMERC./EMPRESARIAL', 'CENTRO COMERCIAL/EMPRESARIAL', DESCR_TIPOLOCAL),
+         DESCRICAO_APRESENTACAO = ifelse(DESCRICAO_APRESENTACAO == 'NULL', as.character(NA), DESCRICAO_APRESENTACAO),
+         DESCRICAO_APRESENTACAO = ifelse(DESCRICAO_APRESENTACAO == 'Por outros', 'Por Outros', DESCRICAO_APRESENTACAO)
+
+)
+
 # check_cols <- c('ANO_BO', 'ANO', 'DESCRICAO_APRESENTACAO', 'DESCR_PERIODO',
 #                 'AUTORIA_BO', 'FLAG_FLAGRANTE', 'FLAG_STATUS', 'RUBRICA_REV',
 #                 'DESCR_CONDUTA', 'DESDOBRAMENTO', 'DESCR_TIPOLOCAL', 'DESCR_SUBTIPOLOCAL',
@@ -325,6 +350,12 @@ ssp_out <- ssp_out %>%
 
 # ssp_out %>% group_by(ANO) %>% summarise(n = n_distinct(ID_BO))
 
+ssp_out %>%
+  mutate(ANO_OCORRENCIA = year(DATA_OCORRENCIA_BO)) %>%
+  filter(NOME_MUNICIPIO_CIRC == 'S.PAULO' & ANO_OCORRENCIA > 2015) %>%
+  group_by(RUBRICA_REV2, ANO_OCORRENCIA) %>%
+  summarise(n = n_distinct(ID_BO))  %>%
+  head(20)
 
 
 # Exportar resultados
